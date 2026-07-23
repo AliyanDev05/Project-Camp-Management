@@ -1,0 +1,18 @@
+{
+  "name": "backend-udemy",
+  "version": "1.0.0",
+  "description": "Project camp management, practice",
+  "main": "index.js",
+  "test": "module",
+  "scripts": {
+    "dev": "node index.js"
+  },
+  "keywords": [
+    "Project",
+    "management",
+    "backend",
+    "course"
+  ],
+  "author": "Aliyan Ali",
+  "license": "ISC"
+}
