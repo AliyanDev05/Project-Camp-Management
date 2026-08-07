@@ -40,6 +40,7 @@ const sendMail = async (options) => {
     console.error("Error:", error);
   }
 };
+
 const emailVerificationMailgenContent = (username, emailVerificationUrl) => {
   return {
     body: {
