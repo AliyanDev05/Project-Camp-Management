@@ -101,7 +101,7 @@ const login = asyncHandler(async (req, res) => {
     throw new ApiError(401, "password is invalid");
   }
 
-  const { accessToken, refreshToken } = generateAccessAndRefreshToken(
+  const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
     existedUser._id,
   );
 
@@ -118,7 +118,17 @@ const login = asyncHandler(async (req, res) => {
     .status(200)
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options)
-    .json(new ApiResponse(200, loggedInUser, "user login successfully"));
+    .json(
+      new ApiResponse(
+        200,
+        {
+          existedUser: loggedInUser,
+          accessToken,
+          refreshToken,
+        },
+        "user login successfully",
+      ),
+    );
 });
 
 export { registerUser, login };
