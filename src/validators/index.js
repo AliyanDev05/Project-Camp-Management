@@ -23,4 +23,14 @@ const userRegisterValidation = () => {
   ];
 };
 
-export { userRegisterValidation };
+const UserLoginValidation = () => {
+  return [
+    body("email")
+      .optional()
+      .notEmpty()
+      .withMessage("email or username is required"),
+    body("password").notEmpty().withMessage("password is required"),
+  ];
+};
+
+export { userRegisterValidation, UserLoginValidation };
