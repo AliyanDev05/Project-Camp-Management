@@ -20,8 +20,8 @@ Project Camp Backend is a RESTful API service designed to support collaborative 
 
 #### 3.1 User Authentication & Authorization
 
-- **User Registration:** Account creation with email verification
-- **User Login:** Secure authentication with JWT tokens
+- **User Registration:** Account creation with email verification ( done )
+- **User Login:** Secure authentication with JWT tokens (done)
 - **Password Management:** Change password, forgot/reset password functionality
 - **Email Verification:** Account verification via email tokens
 - **Token Management:** Access token refresh mechanism
