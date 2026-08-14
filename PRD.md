@@ -84,10 +84,10 @@ Project Camp Backend is a RESTful API service designed to support collaborative 
 - `GET /current-user` - Get current user info (secured)      ==> done
 - `POST /change-password` - Change user password (secured)      
 - `POST /refresh-token` - Refresh access token
-- `GET /verify-email/:verificationToken` - Email verification  
+- `GET /verify-email/:verificationToken` - Email verification  ==> done
 - `POST /forgot-password` - Request password reset
 - `POST /reset-password/:resetToken` - Reset forgotten password
-- `POST /resend-email-verification` - Resend verification email (secured)
+- `POST /resend-email-verification` - Resend verification email (secured)  
 
 **Project Routes** (`/api/v1/projects/`)
 

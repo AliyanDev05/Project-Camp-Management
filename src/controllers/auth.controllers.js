@@ -3,6 +3,7 @@ import { ApiResponse } from "../utils/apiResponse.js";
 import { ApiError } from "../utils/apiError.js";
 import { asyncHandler } from "../utils/async-handler.js";
 import { sendMail, emailVerificationMailgenContent } from "../utils/mail.js";
+import { validate } from "../middlewares/validate.middlewares.js";
 
 const generateAccessAndRefreshToken = async (userId) => {
   try {
@@ -195,6 +196,41 @@ const VerifyEmail = asyncHandler(async (req, res) => {
         "User email Verified",
       ),
     );
+});
+
+const resendVerificationEmail = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  if (user.isEmailVerified) {
+    throw new ApiError(401, "User email already verified");
+  }
+
+  const { hashedToken, unHashedToken, tokenExpiry } =
+    user.generateTemporaryToken();
+
+  user.emailVerificationToken = hashedToken;
+  user.emailVerificationExpiry = tokenExpiry;
+
+  await user.save({ validateBeforeSave: false });
+
+  await sendMail({
+    email: user.email,
+    subject: "please verify your email",
+    mailgenContent: emailVerificationMailgenContent(
+      user.username,
+      `${req.protocol}://${req.get("host")}/api/user/verify-email/${unHashedToken}`,
+    ),
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "verification Email resend successfully"));
 });
 
 // const getCurrentUser = asyncHandler(async (req, res) => {});
