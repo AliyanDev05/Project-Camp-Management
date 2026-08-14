@@ -235,4 +235,11 @@ const resendVerificationEmail = asyncHandler(async (req, res) => {
 
 // const getCurrentUser = asyncHandler(async (req, res) => {});
 
-export { registerUser, login, logoutUser };
+export {
+  registerUser,
+  login,
+  logoutUser,
+  getCurrentUser,
+  VerifyEmail,
+  resendVerificationEmail,
+};
