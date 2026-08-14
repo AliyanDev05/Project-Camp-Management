@@ -4,6 +4,7 @@ import { ApiError } from "../utils/apiError.js";
 import { asyncHandler } from "../utils/async-handler.js";
 import { sendMail, emailVerificationMailgenContent } from "../utils/mail.js";
 import { validate } from "../middlewares/validate.middlewares.js";
+import { jwt } from "jsonwebtoken";
 
 const generateAccessAndRefreshToken = async (userId) => {
   try {
@@ -233,6 +234,63 @@ const resendVerificationEmail = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "verification Email resend successfully"));
 });
 
+const refreshToken = asyncHandler(async (req, res) => {
+  const incomingRequest = req.cookies.refreshToken || req.body.refreshToken;
+
+  if (!incomingRequest) {
+    throw new ApiError(404, "refresh token not found");
+  }
+
+  try {
+    const decodedToken = jwt.verify(
+      incomingRequest,
+      process.env.REFRESH_TOKEN_SECRET,
+    );
+
+    const userId = decodedToken?._id;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+
+    if (user.refreshToken !== incomingRequest) {
+      throw new ApiError(401, "Invalid Refresh token");
+    }
+
+    const { accessToken, refreshToken: newRefreshToken } =
+      await generateAccessAndRefreshToken(userId);
+
+    user.refreshToken = newRefreshToken;
+    await user.save();
+
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+
+    return res
+      .status(200)
+      .cookies("accessToken", accessToken, options)
+      .cookies("refreshToken", refreshToken, options)
+      .json(
+        new ApiResponse(
+          200,
+          {
+            accessToken: accessToken,
+            refreshToken: newRefreshToken,
+          },
+          "new refreshToken send successfully",
+        ),
+      );
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    throw new ApiError(401, "Invalid Refresh token");
+  }
+});
 // const getCurrentUser = asyncHandler(async (req, res) => {});
 
 export {
@@ -242,4 +300,5 @@ export {
   getCurrentUser,
   VerifyEmail,
   resendVerificationEmail,
+  refreshToken,
 };
